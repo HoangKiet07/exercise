@@ -1,22 +1,22 @@
 package com.example.sell.dto.request.Customer;
 
 public class DtoAddCustomer {
-    private int id;
-    private String name;
+    private int idCustomer;
+    private String customerName;
 
-    public int getId() {
-        return id;
+    public int getIdCustomer() {
+        return idCustomer;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIdCustomer(int idCustomer) {
+        this.idCustomer = idCustomer;
     }
 
-    public String getName() {
-        return name;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 }

@@ -2,8 +2,12 @@ package com.example.sell.service.Impl;
 
 import com.example.sell.dto.request.Customer.DtoAddCustomer;
 import com.example.sell.dto.request.Customer.DtoUpdateCustomer;
-import com.example.sell.dto.response.Customer.Response;
+import com.example.sell.dto.response.Customer.ResponseCustomer;
 import com.example.sell.entity.Customer;
+import com.example.sell.exception.CustomerExits;
+import com.example.sell.exception.CustomerNotFound;
+import com.example.sell.mapper.CustomerMapper.CustomerToDtoAddCustomer;
+import com.example.sell.mapper.CustomerMapper.CustomerToUpdateCustomer;
 import com.example.sell.repository.CustomerRepository;
 import com.example.sell.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,48 +29,49 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Response addCustomer(DtoAddCustomer dtoCustomer) {
-        Optional<Customer> customer = customerRepository.findById(dtoCustomer.getId());
+    public ResponseCustomer addCustomer(DtoAddCustomer dtoAddCustomer) {
+        Optional<Customer> customer = customerRepository.findById(dtoAddCustomer.getIdCustomer());
         if (customer.isPresent()){
-            return new Response("Exist", "Customer exist", "");
+            throw new CustomerExits("Customer exits...");
         } else{
-            Customer customer1 = new Customer();
-            customer1.setCustomerName(dtoCustomer.getName());
-            customer1.setIdCustomer(dtoCustomer.getId());
+            Customer customer1 = CustomerToDtoAddCustomer.instance.toCustomer(dtoAddCustomer);
             customerRepository.save(customer1);
-            return new Response("OK", "Add Successfull", customer1);
+            return new ResponseCustomer("OK", "Add Successfull", customer1);
         }
     }
 
     @Override
-    public Optional<Customer> findCustomerById(int id) {
-        return customerRepository.findById(id);
+    public Customer findCustomerById(int id) {
+        Optional<Customer> customer = customerRepository.findById(id);
+        if (customer.isPresent()){
+            return customer.get();
+        }else {
+            throw new CustomerNotFound("Customer Not Found");
+        }
     }
 
 
     @Override
-    public int deleteCustomer(int id) {
+    public ResponseCustomer deleteCustomer(int id) {
         Optional<Customer> customer = customerRepository.findById(id);
         if (customer.isPresent()){
             customerRepository.deleteById(id);
-            return 1;
+            return new ResponseCustomer("OK", "Delete Successfull", customer);
         } else{
-            return 0;
+            throw new CustomerNotFound("Customer Not Found");
         }
 
     }
 
     @Override
-    public int updateCustomer(DtoUpdateCustomer dtoUpdateCustomer) {
-        Optional<Customer> customer1 = customerRepository.findById(dtoUpdateCustomer.getId());
+    public ResponseCustomer updateCustomer(DtoUpdateCustomer dtoUpdateCustomer) {
+        Optional<Customer> customer1 = customerRepository.findById(dtoUpdateCustomer.getIdCustomer());
         if (customer1.isPresent()){
-            Customer customer = new Customer();
-            customer.setCustomerName(dtoUpdateCustomer.getName());
-            customer.setIdCustomer(dtoUpdateCustomer.getId());
+            Customer customer = CustomerToUpdateCustomer.instance.toCustomer(dtoUpdateCustomer);
             customerRepository.save(customer);
-            return 1;
+            return new ResponseCustomer("OK", "Update Successfull", customer);
         } else{
-            return 0;
+            throw new CustomerNotFound("Customer Not Found");
         }
 
     }
