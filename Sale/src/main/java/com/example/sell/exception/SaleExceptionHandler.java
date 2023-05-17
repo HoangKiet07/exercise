@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class SaleExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(CustomerNotFound.class)
-    public ResponseEntity<Object> handlerCustomerNotFound (CustomerNotFound customerNotFound, WebRequest webRequest){
-        return new ResponseEntity<Object>(new ApiError(customerNotFound.getMessage(), HttpStatus.NOT_FOUND, LocalDateTime.now()), HttpStatus.NOT_FOUND);
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<Object> handlerBusinessException (BusinessException businessException, WebRequest webRequest){
+        return new ResponseEntity<Object>(new ApiError(businessException.getMessage(), businessException.getHttpStatus().toString(), LocalDateTime.now()), HttpStatus.OK);
     }
 
-    @ExceptionHandler(CustomerExits.class)
-    public ResponseEntity<Object> handlerCustomerExits (CustomerExits customerExits, WebRequest webRequest){
-        return new ResponseEntity<Object>(new ApiError(customerExits.getMessage(), HttpStatus.BAD_REQUEST, LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handlerException (Exception exception, WebRequest webRequest){
+        return new ResponseEntity<Object>(new ApiError(exception.getMessage(), "400", LocalDateTime.now()), HttpStatus.NOT_FOUND);
     }
 }

@@ -4,13 +4,13 @@ import com.example.sell.dto.request.Customer.DtoAddCustomer;
 import com.example.sell.dto.request.Customer.DtoUpdateCustomer;
 import com.example.sell.dto.response.Customer.ResponseCustomer;
 import com.example.sell.entity.Customer;
-import com.example.sell.exception.CustomerExits;
-import com.example.sell.exception.CustomerNotFound;
+import com.example.sell.exception.BusinessException;
 import com.example.sell.mapper.CustomerMapper.CustomerToDtoAddCustomer;
 import com.example.sell.mapper.CustomerMapper.CustomerToUpdateCustomer;
 import com.example.sell.repository.CustomerRepository;
 import com.example.sell.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,10 +29,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ResponseCustomer addCustomer(DtoAddCustomer dtoAddCustomer) {
+    public ResponseCustomer addCustomer(DtoAddCustomer dtoAddCustomer) throws BusinessException {
         Optional<Customer> customer = customerRepository.findById(dtoAddCustomer.getIdCustomer());
         if (customer.isPresent()){
-            throw new CustomerExits("Customer exits...");
+            throw new BusinessException("Customer exits...", HttpStatus.FOUND);
         } else{
             Customer customer1 = CustomerToDtoAddCustomer.instance.toCustomer(dtoAddCustomer);
             customerRepository.save(customer1);
@@ -41,37 +41,37 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer findCustomerById(int id) {
+    public Customer findCustomerById(int id) throws BusinessException {
         Optional<Customer> customer = customerRepository.findById(id);
         if (customer.isPresent()){
             return customer.get();
         }else {
-            throw new CustomerNotFound("Customer Not Found");
+            throw new BusinessException("Customer Not Found", HttpStatus.NOT_FOUND);
         }
     }
 
 
     @Override
-    public ResponseCustomer deleteCustomer(int id) {
+    public ResponseCustomer deleteCustomer(int id) throws BusinessException {
         Optional<Customer> customer = customerRepository.findById(id);
         if (customer.isPresent()){
             customerRepository.deleteById(id);
             return new ResponseCustomer("OK", "Delete Successfull", customer);
         } else{
-            throw new CustomerNotFound("Customer Not Found");
+            throw new BusinessException("Customer Not Found", HttpStatus.NOT_FOUND);
         }
 
     }
 
     @Override
-    public ResponseCustomer updateCustomer(DtoUpdateCustomer dtoUpdateCustomer) {
+    public ResponseCustomer updateCustomer(DtoUpdateCustomer dtoUpdateCustomer) throws BusinessException {
         Optional<Customer> customer1 = customerRepository.findById(dtoUpdateCustomer.getIdCustomer());
         if (customer1.isPresent()){
             Customer customer = CustomerToUpdateCustomer.instance.toCustomer(dtoUpdateCustomer);
             customerRepository.save(customer);
             return new ResponseCustomer("OK", "Update Successfull", customer);
         } else{
-            throw new CustomerNotFound("Customer Not Found");
+            throw new BusinessException("Customer Not Found", HttpStatus.NOT_FOUND);
         }
 
     }

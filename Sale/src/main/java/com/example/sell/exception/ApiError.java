@@ -6,10 +6,10 @@ import java.time.LocalDateTime;
 
 public class ApiError {
     private String message;
-    private HttpStatus httpStatus;
+    private String httpStatus;
     private LocalDateTime localDateTime;
 
-    public ApiError(String message, HttpStatus httpStatus, LocalDateTime localDateTime) {
+    public ApiError(String message, String httpStatus, LocalDateTime localDateTime) {
         this.message = message;
         this.httpStatus = httpStatus;
         this.localDateTime = localDateTime;
@@ -23,11 +23,11 @@ public class ApiError {
         this.message = message;
     }
 
-    public HttpStatus getHttpStatus() {
+    public String getHttpStatus() {
         return httpStatus;
     }
 
-    public void setHttpStatus(HttpStatus httpStatus) {
+    public void setHttpStatus(String httpStatus) {
         this.httpStatus = httpStatus;
     }
 
